@@ -16,6 +16,10 @@ Before running API server, you should set the database config with yours.
 ```go
 sql.Open("postgres", "postgresql://challenge@localhost:26257/challenge?sslmode=disable")
 ```
+Modify the corsAllowOrigin var for the frontend endpoint choosen by you
+```go
+corsAllowOrigin      = "http://localhost:8084"
+```
 ```bash
 # Build and Run
 cd api-rest-golang
