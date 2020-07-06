@@ -35,7 +35,9 @@ func main() {
 	}
 	handlers.MigrateDB(db)
 	router := fasthttprouter.New()
+	// get collection of domains
 	router.GET("/domains", handlers.GetDomains(db))
+	// request by domain name the information
 	router.POST("/domains/search", handlers.ConsultDomain(db))
 	if err := fasthttp.ListenAndServe(":9000", CORS(router.Handler)); err != nil {
 		log.Fatalf("Error in ListenAndServe: %s", err)
