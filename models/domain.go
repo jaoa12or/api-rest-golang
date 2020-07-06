@@ -4,18 +4,18 @@ import (
 	"database/sql"
 	"encoding/json"
 
-	// is nedded
+	// is nedded for sql querys
 	_ "github.com/lib/pq"
 )
 
-// Domain model Poll
+// Domain model for the domain struct
 type Domain struct {
 	ID     int      `json:"id"`
 	Domain string   `json:"domain"`
 	Data   Response `json:"data"`
 }
 
-// DomainCollection return poll collection
+// DomainCollection return domain collection
 type DomainCollection struct {
 	Domains []Domain `json:"items"`
 	Prev    int      `json:"prev"`
@@ -23,7 +23,7 @@ type DomainCollection struct {
 	Rows    int      `json:"rows"`
 }
 
-// Migrate return poll collection
+// Migrate create the table domains in database
 func Migrate(db *sql.DB) {
 	sql := `
 	CREATE TABLE IF NOT EXISTS domains(
@@ -39,7 +39,7 @@ func Migrate(db *sql.DB) {
 	}
 }
 
-// GetDomains return poll collection
+// GetDomains return domain collection
 func GetDomains(db *sql.DB, action string, id string) DomainCollection {
 	var sql = ""
 	switch action {
@@ -79,7 +79,7 @@ func GetDomains(db *sql.DB, action string, id string) DomainCollection {
 	return result
 }
 
-// CreateDomain create domain
+// CreateDomain create domain into database
 func CreateDomain(db *sql.DB, domain string, data Response) (int64, error) {
 	sql := "INSERT INTO domains (domain, data) VALUES($1, $2)"
 	stmt, err := db.Prepare(sql)
@@ -99,7 +99,7 @@ func CreateDomain(db *sql.DB, domain string, data Response) (int64, error) {
 	return result.RowsAffected()
 }
 
-// UpdateDomain update domain
+// UpdateDomain update domain in database
 func UpdateDomain(db *sql.DB, id int, data Response) (int64, error) {
 	sql := "UPDATE domains SET (data) = ($1) WHERE id = $2"
 	stmt, err := db.Prepare(sql)

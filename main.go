@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/valyala/fasthttp"
 )
-
+// cors policies values
 var (
 	corsAllowCredentials = "true"
 	corsAllowHeaders     = "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token"
@@ -16,7 +16,7 @@ var (
 	corsAllowOrigin      = "http://localhost:8084"
 )
 
-// CORS :
+// CORS : the cors policy
 func CORS(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Access-Control-Allow-Credentials", corsAllowCredentials)

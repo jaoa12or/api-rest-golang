@@ -17,12 +17,12 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-// MigrateDB :
+// MigrateDB : handler for migrate table from main function
 func MigrateDB(db *sql.DB) {
 	models.Migrate(db)
 }
 
-// GetDomains : describe what this function does
+// GetDomains : handler for get domain collection from database
 func GetDomains(db *sql.DB) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		action := ctx.QueryArgs().Peek("action")
@@ -35,7 +35,7 @@ func GetDomains(db *sql.DB) fasthttp.RequestHandler {
 	}
 }
 
-// GetPageInfo : describe what this function does
+// GetPageInfo : method to get the web page information, like icon and title
 func GetPageInfo(domain string) models.ScrapingResponse {
 	// Request the HTML page.
 	var route = "http://" + domain
@@ -73,8 +73,10 @@ func GetPageInfo(domain string) models.ScrapingResponse {
 	return scrapingResponse
 }
 
-// GetOwnerData : get the owner data
+// GetOwnerData : get the owner data of the web site
 func GetOwnerData(address string, key string) string {
+	// get the owner data trough piped command between whois command and grep
+	// to get the exact key information that is been searched
 	output := exec.Command("whois", address)
 	output2 := exec.Command("grep", "-m 1", key)
 	reader, writer := io.Pipe()
@@ -95,14 +97,16 @@ func GetOwnerData(address string, key string) string {
 	return strTrim2
 }
 
-// ConsultDomain : describe what this function does
+// ConsultDomain : handler for get all the information required for an user domain request 
 func ConsultDomain(db *sql.DB) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		var response models.Response
 		var badRequest models.BadRequest
 		var sendResponse = true
 		strTrim := string(ctx.FormValue("domain"))
+		// get domain from request
 		domain := url.QueryEscape(strTrim)
+		// get the info of domain from ssllabs
 		url := "https://api.ssllabs.com/api/v3/analyze?host=" + domain
 		resp, err := http.Get(url)
 		if err != nil {
@@ -125,6 +129,7 @@ func ConsultDomain(db *sql.DB) fasthttp.RequestHandler {
 				previousGrade := 0
 				finalGrade := ""
 				for i := 0; i < len(sslResponse.Endpoints); i++ {
+					// get the owner data
 					var owner = GetOwnerData(sslResponse.Endpoints[i].Address, "OrgName")
 					var country = GetOwnerData(sslResponse.Endpoints[i].Address, "Country")
 					sslResponse.Endpoints[i].Owner = owner
@@ -154,6 +159,7 @@ func ConsultDomain(db *sql.DB) fasthttp.RequestHandler {
 				response.Logo = pageInfo.Icon
 				response.Title = pageInfo.Title
 				response.IsDown = false
+				// check if domain exists. then deside if create or update the info in database
 				previousData, err := models.CheckIfDomainExists(db, domain)
 				switch {
 				case reflect.DeepEqual(models.Domain{}, previousData):
@@ -197,6 +203,8 @@ func ConsultDomain(db *sql.DB) fasthttp.RequestHandler {
 					}
 				}
 			} else {
+				// if the system can't get any information from ssl server for a domain
+				// then the domain is updated to unreachable (is_down = false)
 				previousData, err := models.CheckIfDomainExists(db, domain)
 				if err != nil {
 					log.Println(err)
