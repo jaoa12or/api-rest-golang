@@ -47,6 +47,8 @@ cockroach start \
 --join=localhost:26257,localhost:26258,localhost:26259 \
 --background
 
+cockroach init --insecure --host=localhost:26257
+
 ```
 
 # Stop cockroach nodes
