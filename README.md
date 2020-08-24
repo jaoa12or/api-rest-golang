@@ -49,14 +49,26 @@ cockroach start \
 
 ```
 
+# Stop cockroach nodes
+
 ```bash
+cockroach quit --insecure --host=localhost:26257
+cockroach quit --insecure --host=localhost:26258
+cockroach quit --insecure --host=localhost:26259
+```
+
 # Build and Run
+
+```bash
 cd api-rest-golang
 go run main.go
 
-# API Endpoint : http://127.0.0.1:9000
 ```
+## API Endpoint 
 
+```
+http://127.0.0.1:9000
+```
 ## Structure
 ```
 ├─ api-rest-golang
