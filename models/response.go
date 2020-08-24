@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Endpoint model SslResponse
+// Endpoint : model SslResponse
 type Endpoint struct {
 	Address string `json:"ipAddress"`
 	Grade   string `json:"grade"`
@@ -13,29 +13,29 @@ type Endpoint struct {
 	Owner   string `json:"owner"`
 }
 
-// Endpoints model SslResponse
+// Endpoints : model SslResponse
 type Endpoints struct {
 	Endpoints []Endpoint `json:"endpoints"`
 }
 
-// WhoisResponse model WhoisResponse
+// WhoisResponse : model WhoisResponse
 type WhoisResponse struct {
 	Country string `json:"Country"`
 	Owner   string `json:"OrgName"`
 }
 
-// ScrapingResponse model ScrapingResponse
+// ScrapingResponse : model ScrapingResponse
 type ScrapingResponse struct {
 	Icon  string
 	Title string
 }
 
-// BadRequest :
+// BadRequest : model for bad request
 type BadRequest struct{
 	Response string `json:"response"`
 }
 
-// Response model Response
+// Response : model Response
 type Response struct {
 	Servers          []Endpoint `json:"servers"`
 	ServerChanged    bool       `json:"server_changed"`
